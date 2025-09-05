@@ -1,4 +1,4 @@
-# Chat App - Version 1
+# Chat App - Version 2
 
 Une application de chat en temps réel simple utilisant Socket.IO et Twig.
 
@@ -52,4 +52,8 @@ TP1_Chat/
 
 ## Version
 
-**Version 1** - Chat sans authentification avancée (nom d'utilisateur simple)
+**Version 2** - Améliorations et nouvelles fonctionnalités (en cours de développement)
+
+### Historique des versions
+- **V1** : Chat basique avec authentification simple
+- **V2** : Nouvelles fonctionnalités à venir...
