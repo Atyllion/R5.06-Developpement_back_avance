@@ -1,10 +1,21 @@
-var express = require('express');
-var http = require('http');
-const { Server } = require("socket.io");
-var path = require('path');
+import express from 'express';
+import { createServer } from 'http';
+import { Server } from 'socket.io';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import 'dotenv/config';
+import { PrismaClient } from './generated/prisma/index.js';
 
-var app = express();
-const server = http.createServer(app);
+// Prisma Client
+const prisma = new PrismaClient();
+
+// Équivalent de __dirname et __filename en ES Modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const app = express();
+const server = createServer(app);
 const io = new Server(server);
 
 // Configuration
@@ -16,11 +27,31 @@ app.use(express.static(path.join(__dirname, 'public')));
 let users = new Map();
 
 // Routes
-app.get('/', function (req, res) {
+app.get('/', async function (req, res) {
     if (!req.query.username) {
         return res.redirect('/join');
     }
-    res.render('index', { username: req.query.username });
+    
+    // Récupérer les derniers messages de la BDD
+    try {
+        const messages = await prisma.message.findMany({
+            orderBy: {
+                createdAt: 'asc'
+            },
+            take: 50 // Limiter à 50 derniers messages
+        });
+        
+        res.render('index', { 
+            username: req.query.username,
+            messages: messages 
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération des messages:', error);
+        res.render('index', { 
+            username: req.query.username,
+            messages: [] 
+        });
+    }
 });
 
 app.get('/join', function (req, res) {
@@ -35,13 +66,32 @@ io.on('connection', (socket) => {
         io.emit('user count', users.size);
     });
     
-    socket.on('chat message', (data) => {
+    socket.on('chat message', async (data) => {
         const username = users.get(socket.id);
         if (username) {
-            io.emit('chat message', {
-                username: username,
-                message: data.message
-            });
+            try {
+                // Sauvegarder le message en BDD
+                const savedMessage = await prisma.message.create({
+                    data: {
+                        pseudo: username,
+                        content: data.message
+                    }
+                });
+                
+                // Diffuser le message à tous les clients
+                io.emit('chat message', {
+                    username: username,
+                    message: data.message,
+                    createdAt: savedMessage.createdAt
+                });
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde du message:', error);
+                // En cas d'erreur, diffuser quand même le message
+                io.emit('chat message', {
+                    username: username,
+                    message: data.message
+                });
+            }
         }
     });
     
@@ -55,6 +105,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(3000, function () {
-   console.log("Chat en ligne: http://127.0.0.1:3000/join");
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, function () {
+   console.log(`Chat en ligne: http://127.0.0.1:${PORT}/join`);
 })

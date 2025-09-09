@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Chat Simple</title>
+    <title>Chat en Ligne</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <section class="chat-container">
         <header class="chat-header">
-            <h1>Chat Simple</h1>
+            <h1>Chat</h1>
             <p class="user-info">
                 Utilisateur: {{ username }} | En ligne: <span id="userCount"></span>
             </p>
@@ -16,6 +16,13 @@
         
         <main class="messages-container">
             <ul id="messagesList">
+                {% for message in messages %}
+                <li class="message other-message">
+                    <span class="message-header">{{ message.pseudo }}</span>
+                    <div class="message-content">{{ message.content }}</div>
+                    <small class="message-time">{{ message.createdAt|date('H:i') }}</small>
+                </li>
+                {% endfor %}
             </ul>
         </main>
         
@@ -56,8 +63,17 @@
                 content.className = 'message-content';
                 content.textContent = data.message;
                 
+                const time = document.createElement('small');
+                time.className = 'message-time';
+                if (data.createdAt) {
+                    time.textContent = new Date(data.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                } else {
+                    time.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+                }
+                
                 li.appendChild(header);
                 li.appendChild(content);
+                li.appendChild(time);
             }
             
             messagesList.appendChild(li);
