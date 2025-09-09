@@ -10,6 +10,21 @@ import { PrismaClient } from './generated/prisma/index.js';
 // Prisma Client
 const prisma = new PrismaClient();
 
+// Test de connexion à la base de données
+async function testDatabaseConnection() {
+    try {
+        await prisma.$connect();
+        console.log('✅ Connexion à la base de données réussie');
+    } catch (error) {
+        console.error('❌ Erreur de connexion à la base de données:', error);
+        console.log('ℹ️  Tentative de reconnexion dans 5 secondes...');
+        setTimeout(testDatabaseConnection, 5000);
+    }
+}
+
+// Tester la connexion au démarrage
+testDatabaseConnection();
+
 // Équivalent de __dirname et __filename en ES Modules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -107,5 +122,23 @@ io.on('connection', (socket) => {
 
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, function () {
-   console.log(`Chat en ligne: http://127.0.0.1:${PORT}/join`);
+   console.log(`🚀 Chat en ligne: http://127.0.0.1:${PORT}/join`);
 })
+
+// Nettoyage des ressources à la fermeture
+process.on('beforeExit', async () => {
+    await prisma.$disconnect();
+    console.log('🔌 Prisma déconnecté');
+});
+
+process.on('SIGINT', async () => {
+    console.log('\n🔌 Fermeture du serveur...');
+    await prisma.$disconnect();
+    process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+    console.log('🔌 Signal SIGTERM reçu, fermeture propre...');
+    await prisma.$disconnect();
+    process.exit(0);
+});
