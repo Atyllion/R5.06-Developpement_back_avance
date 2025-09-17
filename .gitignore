@@ -1,10 +1,15 @@
 /node_modules
 /.env
-/generated/prisma
+
+# Prisma - exclure seulement les binaires lourds
+/generated/prisma/*.node
+/generated/prisma/query_engine-*
 
 # Playwright
-node_modules/
 /test-results/
 /playwright-report/
 /blob-report/
 /playwright/.cache/
+
+# Coverage Jest
+/coverage/
