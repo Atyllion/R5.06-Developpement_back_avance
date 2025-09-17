@@ -132,9 +132,7 @@ exports.Prisma.UserScalarFieldEnum = {
   pseudo: 'pseudo',
   password: 'password',
   email: 'email',
-  isActive: 'isActive',
-  createdAt: 'createdAt',
-  updatedAt: 'updatedAt'
+  isActive: 'isActive'
 };
 
 exports.Prisma.SortOrder = {

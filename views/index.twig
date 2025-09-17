@@ -5,12 +5,13 @@
     <title>Chat en Ligne</title>
     <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body data-username="{{ username }}">
     <section class="chat-container">
         <header class="chat-header">
             <h1>Chat</h1>
             <p class="user-info">
                 Utilisateur: {{ username }} | En ligne: <span id="userCount"></span>
+                <button id="logoutBtn" class="logout-btn">Déconnexion</button>
             </p>
         </header>
         
@@ -33,70 +34,6 @@
     </section>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        const socket = io();
-        const messagesList = document.getElementById('messagesList');
-        const messageInput = document.getElementById('messageInput');
-        const sendBtn = document.getElementById('sendBtn');
-        const userCount = document.getElementById('userCount');
-        const username = '{{ username }}';
-
-        function addMessage(data) {
-            const li = document.createElement('li');
-            li.className = 'message';
-            
-            if (data.type === 'system') {
-                li.className += ' system-message';
-                li.textContent = data.message;
-            } else {
-                if (data.username === username) {
-                    li.className += ' own-message';
-                } else {
-                    li.className += ' other-message';
-                }
-                
-                const header = document.createElement('span');
-                header.className = 'message-header';
-                header.textContent = data.username;
-                
-                const content = document.createElement('div');
-                content.className = 'message-content';
-                content.textContent = data.message;
-                
-                const time = document.createElement('small');
-                time.className = 'message-time';
-                if (data.createdAt) {
-                    time.textContent = new Date(data.createdAt).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                } else {
-                    time.textContent = new Date().toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
-                }
-                
-                li.appendChild(header);
-                li.appendChild(content);
-                li.appendChild(time);
-            }
-            
-            messagesList.appendChild(li);
-            messagesList.scrollTop = messagesList.scrollHeight;
-        }
-
-        function sendMessage() {
-            const message = messageInput.value.trim();
-            if (message) {
-                socket.emit('chat message', { message: message });
-                messageInput.value = '';
-            }
-        }
-
-        socket.on('chat message', addMessage);
-        socket.on('user connected', (data) => addMessage({ type: 'system', message: data.username + ' a rejoint' }));
-        socket.on('user disconnected', (data) => addMessage({ type: 'system', message: data.username + ' a quitté' }));
-        socket.on('user count', (count) => userCount.textContent = count);
-
-        sendBtn.onclick = sendMessage;
-        messageInput.onkeypress = (e) => { if (e.key === 'Enter') sendMessage(); };
-
-        socket.on('connect', () => socket.emit('user join', username));
-    </script>
+    <script src="/main.js"></script>
 </body>
 </html>
