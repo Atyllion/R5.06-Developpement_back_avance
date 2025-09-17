@@ -5,6 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "npx prisma generate && npx prisma migrate deploy",
+    "postinstall": "npx prisma generate",
     "test:socket": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/socket.test.js",
     "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/session.e2e.test.js",
     "test:routes": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/routes.test.js"
