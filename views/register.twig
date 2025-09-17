@@ -2,13 +2,13 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Connexion au Chat</title>
+    <title>Inscription au Chat</title>
     <link rel="stylesheet" href="/style.css">
 </head>
 <body>
     <section class="join-container">
         <header class="join-header">
-            <h1>Connexion au Chat</h1>
+            <h1>Inscription au Chat</h1>
         </header>
 
         <main class="join-main">
@@ -20,35 +20,60 @@
                 <div class="success-message">{{ success }}</div>
             {% endif %}
             
-            <form action="/login" method="POST">
+            <form action="/register" method="POST">
                 <div class="form-group">
                     <input type="text" 
                            name="pseudo" 
                            placeholder="Pseudo" 
                            required 
+                           value="{{ pseudo|default('') }}" 
                            minlength="3" 
                            maxlength="20"
                            pattern="[a-zA-Z0-9_-]+"
                            title="Le pseudo doit contenir entre 3 et 20 caractères (lettres, chiffres, _ et - uniquement)">
                 </div>
+                
+                <div class="form-group">
+                    <input type="email" 
+                           name="email" 
+                           placeholder="Adresse email" 
+                           required 
+                           value="{{ email|default('') }}"
+                           pattern="[^\s@]+@[^\s@]+\.[^\s@]+"
+                           title="Veuillez saisir une adresse email valide">
+                </div>
+                
                 <div class="form-group">
                     <input type="password" 
                            name="password" 
                            placeholder="Mot de passe" 
                            required 
                            minlength="6"
+                           pattern=".{6,}"
                            title="Le mot de passe doit contenir au moins 6 caractères">
                 </div>
-                <button type="submit">Se connecter</button>
+                
+                <div class="form-group">
+                    <input type="password" 
+                           name="confirmPassword" 
+                           placeholder="Confirmer le mot de passe" 
+                           required 
+                           minlength="6"
+                           pattern=".{6,}"
+                           title="Le mot de passe de confirmation doit contenir au moins 6 caractères"
+                           oninput="this.setCustomValidity(this.value !== document.querySelector('input[name=password]').value ? 'Les mots de passe ne correspondent pas' : '')">
+                </div>
+                
+                <button type="submit">S'inscrire</button>
             </form>
             
             <div class="auth-links">
-                <p>Pas encore inscrit ? <a href="/register">Créer un compte</a></p>
+                <p>Déjà inscrit ? <a href="/join">Se connecter</a></p>
             </div>
         </main>
     </section>
     
     <script src="/main.js"></script>
-    <script src="/login.js"></script>
+    <script src="/register.js"></script>
 </body>
 </html>
