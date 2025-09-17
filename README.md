@@ -26,6 +26,7 @@ Une application de chat en temps réel avec persistance des données utilisant S
 - **Templating**: Twig
 - **WebSocket**: Socket.IO v4.8.1
 - **Frontend**: HTML5 sémantique + CSS3
+- **Tests**: Jest + Supertest (tests unitaires) + Playwright (tests E2E)
 - **Déploiement**: Render.com
 
 ## Installation
@@ -59,6 +60,18 @@ npm start
 
 L'application sera accessible sur http://localhost:3000
 
+## Tests
+
+**Tests unitaires (Jest + Supertest) :**
+```bash
+npm test
+```
+
+**Tests E2E (Playwright) :**
+```bash
+npm run test:e2e
+```
+
 ## Structure
 
 ```
@@ -69,6 +82,11 @@ TP1_Chat/
 ├── prisma/
 │   └── schema.prisma     # Schéma de base de données
 ├── generated/prisma/     # Client Prisma généré
+├── tests/                # Tests unitaires et E2E
+│   ├── routes.test.js    # Tests des routes HTTP
+│   ├── socket.test.js    # Tests Socket.IO
+│   └── session.e2e.test.js # Tests end-to-end
+├── e2e/                  # Tests Playwright
 ├── public/
 │   └── style.css         # Styles CSS améliorés
 └── views/
@@ -105,3 +123,4 @@ TP1_Chat/
   - ✅ Gestion d'erreurs robuste
   - ✅ Configuration pour déploiement en production (Render)
   - ✅ Interface utilisateur améliorée
+  - ✅ Tests automatisés (Jest + Supertest + Playwright)

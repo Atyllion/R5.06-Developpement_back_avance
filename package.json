@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "prisma generate",
-    "postinstall": "prisma generate",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test:socket": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/socket.test.js",
+    "test:e2e": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/session.e2e.test.js",
+    "test:routes": "node --experimental-vm-modules node_modules/jest/bin/jest.js tests/routes.test.js"
   },
   "keywords": [],
   "author": "",
@@ -15,12 +15,17 @@
   "type": "module",
   "dependencies": {
     "@prisma/client": "^6.15.0",
-    "prisma": "^6.15.0",
     "dotenv": "^17.2.2",
     "express": "^5.1.0",
+    "prisma": "^6.15.0",
     "socket.io": "^4.8.1",
     "twig": "^1.17.1"
   },
   "devDependencies": {
+    "@playwright/test": "^1.55.0",
+    "@types/node": "^24.3.1",
+    "jest": "^30.1.3",
+    "socket.io-client": "^4.8.1",
+    "supertest": "^7.1.4"
   }
 }
